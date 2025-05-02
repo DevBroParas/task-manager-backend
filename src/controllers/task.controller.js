@@ -4,8 +4,9 @@ import Project from "../models/project.model.js";
 // Create Task
 export const CreateTask = async (req, res, next) => {
     try {
-        const { title, description, status, projectId } = req.body;
-        const userId = req.user._id;
+        const { title, description, status } = req.body;
+        const { projectId } = req.params;
+        const userId = req.user._id; // Ensure the user ID is properly obtained
 
         if (!title || !description || !status || !projectId) {
             return res.status(400).json({ message: "All fields are required" });
@@ -16,11 +17,12 @@ export const CreateTask = async (req, res, next) => {
             description,
             status,
             project: projectId,
-            user: userId,
+            user: userId, // Ensure the user is associated with the task
         });
 
         await task.save();
 
+        // Update the project document to include the new task in its tasks array
         await Project.findByIdAndUpdate(projectId, {
             $push: { tasks: task._id },
         });
@@ -32,8 +34,13 @@ export const CreateTask = async (req, res, next) => {
 };
 
 export const GetAllTasks = async (req, res, next) => {
+    console.log("User ID:", req.user);
     try {
         const { projectId } = req.params;
+
+        if (!projectId) {
+            return res.status(400).json({ message: "Project ID is required" });
+        }
 
         const tasks = await Task.find({
             project: projectId,

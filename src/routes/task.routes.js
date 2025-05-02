@@ -10,14 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post("/tasks", protect, CreateTask);
-
-router.get("/tasks", protect, GetAllTasks);
+router.post("/tasks/project/:projectId", protect, CreateTask);
+router.get("/tasks/project/:projectId", protect, GetAllTasks);
 
 router.get("/tasks/:id", protect, GetSingleTask);
-
 router.patch("/tasks/:id", protect, UpdateTask);
-
 router.delete("/tasks/:id", protect, DeleteTask);
-
 export default router;

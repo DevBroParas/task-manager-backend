@@ -25,13 +25,17 @@ import taskRoutes from "./routes/task.routes.js";
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/project", projectRoutes);
-app.use("/api/vi/task", taskRoutes);
+app.use("/api/v1/task", taskRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
     const status = err.status || 500;
     const message = err.message || "Something went wrong";
     res.status(status).json({ message });
+});
+
+app.get("/", (req, res) => {
+    res.send("Hello World!");
 });
 
 app.listen(PORT, async () => {
