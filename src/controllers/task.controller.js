@@ -34,7 +34,6 @@ export const CreateTask = async (req, res, next) => {
 };
 
 export const GetAllTasks = async (req, res, next) => {
-    console.log("User ID:", req.user);
     try {
         const { projectId } = req.params;
 
@@ -119,6 +118,17 @@ export const DeleteTask = async (req, res, next) => {
         });
 
         res.status(200).json({ message: "Task deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const AllProjectTasks = async (req, res, next) => {
+    try {
+        const tasks = await Task.find({ user: req.user._id }).populate(
+            "project"
+        );
+        res.status(200).json({ tasks });
     } catch (error) {
         next(error);
     }

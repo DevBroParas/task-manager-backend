@@ -47,3 +47,30 @@ export const GetSingleProject = async (req, res, next) => {
         next(error);
     }
 };
+
+export const UpdateProject = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updatedProject = await Project.findOneAndUpdate(
+            { _id: id, user: req.user._id },
+            { ...req.body },
+            { new: true }
+        );
+        res.status(200).json({ project: updatedProject });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const DeleteProject = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const project = await Project.findOneAndDelete({
+            _id: id,
+            user: req.user._id,
+        });
+        res.status(200).json({ message: "Project deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
