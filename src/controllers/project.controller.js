@@ -1,4 +1,5 @@
 import Project from "../models/project.model.js";
+import Task from "../models/task.model.js";
 import User from "../models/user.model.js";
 
 export const CreateProject = async (req, res, next) => {
@@ -51,11 +52,24 @@ export const GetSingleProject = async (req, res, next) => {
 export const UpdateProject = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const { name } = req.body;
+
+        if (!name) {
+            return res
+                .status(400)
+                .json({ message: "Project name is required" });
+        }
+
         const updatedProject = await Project.findOneAndUpdate(
             { _id: id, user: req.user._id },
-            { ...req.body },
+            { name },
             { new: true }
         );
+
+        if (!updatedProject) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
         res.status(200).json({ project: updatedProject });
     } catch (error) {
         next(error);
@@ -65,11 +79,21 @@ export const UpdateProject = async (req, res, next) => {
 export const DeleteProject = async (req, res, next) => {
     try {
         const { id } = req.params;
+
+        await Task.deleteMany({ project: id });
+
         const project = await Project.findOneAndDelete({
             _id: id,
             user: req.user._id,
         });
-        res.status(200).json({ message: "Project deleted successfully" });
+
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        res.status(200).json({
+            message: "Project and its tasks deleted successfully",
+        });
     } catch (error) {
         next(error);
     }
