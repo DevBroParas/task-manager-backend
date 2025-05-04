@@ -11,12 +11,16 @@ import {
 
 const router = express.Router();
 
-router.get("/tasks", protect, AllProjectTasks);
-
-router.post("/tasks/project/:projectId", protect, CreateTask);
 router.get("/tasks/project/:projectId", protect, GetAllTasks);
 
+router.post("/tasks/project/:projectId", protect, CreateTask);
+
 router.get("/tasks/:id", protect, GetSingleTask);
+
 router.patch("/tasks/:id", protect, UpdateTask);
+
 router.delete("/tasks/:id", protect, DeleteTask);
+
+router.get("/tasks", protect, AllProjectTasks);
+
 export default router;

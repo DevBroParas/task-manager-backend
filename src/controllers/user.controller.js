@@ -37,7 +37,7 @@ export const Register = async (req, res, next) => {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 30,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
 
         const userObject = savedUser.toObject(); // ensures plain JS object
@@ -84,7 +84,6 @@ export const Login = async (req, res, next) => {
         const { password: _, ...userWithoutPassword } = user;
 
         res.status(200).json({ user: userWithoutPassword });
-        console.log("userCreated:", user);
     } catch (error) {
         next(error);
     }
